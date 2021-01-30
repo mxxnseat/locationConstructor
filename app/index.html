@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>  
+
+    <div class="loader">
+        loading...
+    </div>
+
+    <div class="menu-wrapper">
+        <div class="row map-setups">
+            <form method="POST" enctype="multipart/form-data">
+                <input type="file" class="input-upload_images" name="images" multiple>
+                <button id="upload">load</button>
+            </form>
+   
+            <div class="image-wrapper">
+                <span id="landscape-checkbox">
+                    landscape: 
+                    <input type="checkbox" checked>
+                </span>
+                <div class="uploaded-image">
+                    
+                    
+                </div>
+                
+                <button class="button image-wrapper_button">Show all</button>
+            </div>
+            <button class="button save">Save map</button>
+        </div>
+        <div class="tools-wrapper">
+            <label class="tool" for="turn-grid" id="grid">
+                Grid
+                <input type="checkbox" id="turn-grid" class="checkbox">
+            </label>
+            
+
+            <label class="tool" for="turn-select" id="select">
+                Selection
+                <input type="checkbox" id="turn-select" class="checkbox">
+            </label>
+            
+        </div>
+    </div>
+
+    <div class="open">
+        <img src="assets/open.png">
+    </div>
+
+    <canvas id="main"></canvas>
+
+    <script src="main.js"></script>
+</body>
+</html>
