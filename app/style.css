@@ -45,10 +45,29 @@ body {
   flex-wrap: wrap;
   gap: 1rem;
 }
+.map-setups .image-wrapper .uploaded-image .exit-up {
+  cursor: pointer;
+  width: 25px;
+  height: 40px;
+}
 .map-setups .image-wrapper .uploaded-image_item {
   cursor: pointer;
   width: 60px;
   height: 60px;
+}
+.map-setups .image-wrapper .uploaded-image .directory {
+  width: 100px;
+  height: 60px;
+  text-align: center;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.map-setups .image-wrapper .uploaded-image .directory img {
+  width: 60px;
+  height: 100%;
+  display: block;
 }
 .map-setups .image-wrapper_button {
   margin-top: 0.5rem;
@@ -164,6 +183,7 @@ canvas#grid {
   right: -160px;
   top: 0;
   width: 160px;
+  color: #d3e7e7;
 }
 .image-settings-modal.set-size_wrap span {
   display: flex;

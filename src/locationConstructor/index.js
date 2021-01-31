@@ -4,7 +4,7 @@ import Selection from "../tools/selection";
 
 //methods
 import listeners from "./methods/listeners";
-import { collisionElement, getImages, submitingForm } from "./methods/init";
+import { collisionElement, getDirectories, submitingForm, getImages } from "./methods/init";
 
 
 export default class LocationConstructor {
@@ -12,14 +12,16 @@ export default class LocationConstructor {
         this.cnv = cnv;
         this.ctx = ctx;
         this.locationSize = locSizes;
-        this.landscape = true;
-        this.selectedObjects = [];
+        this.loadDir = "landscape"; 
 
         this.listeners = listeners.bind(this);
         this.collisionElement = collisionElement.bind(this);
+        this.getDirectories = getDirectories.bind(this);
         this.getImages = getImages.bind(this);
         this.submitingForm = submitingForm.bind(this);
-
+        
+        this.assets = [];
+        this.selectedObjects = [];
         this.gameObjects = [];
         this.landscape = [];
         this.keydown = {};
@@ -43,7 +45,7 @@ export default class LocationConstructor {
         })
     }
     init() {
-        this.getImages()
+        this.getDirectories()
         this.collisionElement();
         this.submitingForm();
         this.listeners();
@@ -58,8 +60,8 @@ export default class LocationConstructor {
     draw() {
         this.ctx.clearRect(0, 0, innerWidth, innerHeight);
 
-        this.gameObjects.map(object => object.draw(this.camera.getCord()));
         this.landscape.map(piece=>piece.draw(this.camera.getCord()));
+        this.gameObjects.map(object => object.draw(this.camera.getCord()));
 
         this.select && this.selection.draw(this.select);
         this.grid.active() && this.grid.draw(this.locationSize, this.camera.getCord());

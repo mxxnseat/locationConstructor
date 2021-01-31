@@ -43,11 +43,32 @@ body{
             flex-wrap: wrap;
             gap: 1rem;
 
+            .exit-up{
+                cursor: pointer;
+                width: 25px;
+                height: 40px;
+            }
+
                 &_item{
                     cursor: pointer;
                     width: 60px;
                     height: 60px;
                 }
+            .directory{
+                width: 100px;
+                height: 60px;
+                text-align: center;
+                cursor: pointer;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+
+                img{
+                    width: 60px;
+                    height: 100%;
+                    display: block;
+                }
+            }
         }
         &_button{
             margin-top: .5rem;
@@ -167,6 +188,7 @@ canvas#grid{
             right: -160px;
             top: 0;
             width: 160px;
+            color: #d3e7e7;
 
             span{
                 display: flex;

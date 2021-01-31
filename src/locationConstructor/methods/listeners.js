@@ -9,9 +9,8 @@ export default function () {
     });
     window.addEventListener("keydown", (e) => {
         this.keydown[e.key] = true;
-
-        if(e.key === "Escape") delete this.textureParams;
-        if (e.key === "Delete" && this.selectedObjects.length) {
+        if(this.keydown["Escape"]) delete this.textureParams;
+        if (this.keydown["Delete"] && this.selectedObjects.length) {
             this.gameObjects = this.gameObjects.filter(obj => {
                 return this.selectedObjects.indexOf(obj) == -1;
             });
@@ -90,7 +89,7 @@ export default function () {
                     const gridCellCord = this.grid.attraction(x, y);
                     const gameObject = new GameObject(this.ctx, gridCellCord.x, gridCellCord.y, this.textureParams);
 
-                    this.landscape ? this.landscape.push(gameObject) : this.gameObjects.push(gameObject);
+                    this.objectType==="landscape" ? this.landscape.push(gameObject) : this.gameObjects.push(gameObject);
                 }
                 break;
             case 2:
