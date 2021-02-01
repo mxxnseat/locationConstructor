@@ -5,12 +5,18 @@ import Selection from "../tools/selection";
 //methods
 import listeners from "./methods/listeners";
 import { collisionElement, getDirectories, submitingForm, getImages } from "./methods/init";
+import save from "./methods/save";
+import GameObject from "../gameObjects";
 
 
 export default class LocationConstructor {
-    constructor(cnv, ctx, locSizes) {
+    constructor(cnv, ctx,landscapeCnv, landscapeCtx, locSizes) {
+        this.cancelLoop = false;
+
         this.cnv = cnv;
         this.ctx = ctx;
+        this.landscapeCnv = landscapeCnv;
+        this.landscapeCtx = landscapeCtx;
         this.locationSize = locSizes;
         this.loadDir = "landscape"; 
 
@@ -19,7 +25,8 @@ export default class LocationConstructor {
         this.getDirectories = getDirectories.bind(this);
         this.getImages = getImages.bind(this);
         this.submitingForm = submitingForm.bind(this);
-        
+        this.save = save.bind(this);
+
         this.assets = [];
         this.selectedObjects = [];
         this.gameObjects = [];
@@ -36,19 +43,21 @@ export default class LocationConstructor {
         };
     }
     setCanvasSize() {
-        this.cnv.width = innerWidth;
-        this.cnv.height = innerHeight;
+        this.cnv.width = this.landscapeCnv.width = innerWidth;
+        this.cnv.height = this.landscapeCnv.height = innerHeight;
 
         window.addEventListener("resize", () => {
-            this.cnv.width = innerWidth;
-            this.cnv.height = innerHeight;
+            this.cnv.width = this.landscapeCnv.width = innerWidth;
+            this.cnv.height = this.landscapeCnv.height = innerHeight;
         })
     }
     init() {
-        this.getDirectories()
+        
+        this.getDirectories();
         this.collisionElement();
         this.submitingForm();
         this.listeners();
+        this.save();
 
         this.selection = new Selection(this.ctx);
         this.grid = new Grid(this.ctx);
@@ -57,28 +66,24 @@ export default class LocationConstructor {
         this.setCanvasSize();
         this.loop();
     }
+    clear(){
+        this.ctx.clearRect(0,0,innerWidth,innerHeight);
+        this.landscapeCtx.clearRect(0,0,innerWidth,innerHeight);
+    }
     draw() {
-        this.ctx.clearRect(0, 0, innerWidth, innerHeight);
+        this.clear();
 
-        this.landscape.map(piece=>piece.draw(this.camera.getCord()));
-        this.gameObjects.map(object => object.draw(this.camera.getCord()));
+        this.landscape.map(piece=>piece.draw(this.landscapeCtx, this.camera.getCord()));
+        this.gameObjects.map(object => object.draw(this.ctx, this.camera.getCord()));
 
         this.select && this.selection.draw(this.select);
         this.grid.active() && this.grid.draw(this.locationSize, this.camera.getCord());
 
         this.textureParams && this.ctx.drawImage(this.textureParams.texture, this.clientCursorPosition.x, this.clientCursorPosition.y, this.textureParams.w, this.textureParams.h);
     }
-
-    save() {
-        const map = this.gameObjects.map(obj => {
-            return obj.getCord();
-        });
-        return JSON.stringify(map);
-    }
-
-    loop() {
+    loop(){
         this.draw();
 
-        requestAnimationFrame(() => this.loop());
+        !this.cancelLoop && requestAnimationFrame(()=>this.loop());
     }
 }

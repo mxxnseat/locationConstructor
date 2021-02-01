@@ -11,12 +11,12 @@ export default function () {
         this.keydown[e.key] = true;
         if(this.keydown["Escape"]) delete this.textureParams;
         if (this.keydown["Delete"] && this.selectedObjects.length) {
-            this.gameObjects = this.gameObjects.filter(obj => {
+            this.gameObjects = this.objectType === "gameObjects" ? this.gameObjects.filter(obj => {
                 return this.selectedObjects.indexOf(obj) == -1;
-            });
-            this.landscape = this.landscape.filter(obj => {
+            }) : this.gameObjects;
+            this.landscape = this.objectType === "landscape" ? this.landscape.filter(obj => {
                 return this.selectedObjects.indexOf(obj) == -1;
-            });
+            }) : this.landscape;
             this.selectedObjects = [];
         }
         if (this.keydown['Control'] && this.keydown['v']) {
@@ -29,7 +29,6 @@ export default function () {
                         const { x, y } = this.grid.attraction(this.selectedArea.x1, this.selectedArea.y1);
 
                         let gameObject = new GameObject(
-                            this.ctx,
                             x + (i * 60),
                             y + (j * 60),
                             this.textureParams
@@ -87,7 +86,7 @@ export default function () {
                 }
                 if (this.textureParams) {
                     const gridCellCord = this.grid.attraction(x, y);
-                    const gameObject = new GameObject(this.ctx, gridCellCord.x, gridCellCord.y, this.textureParams);
+                    const gameObject = new GameObject(gridCellCord.x, gridCellCord.y, this.textureParams);
 
                     this.objectType==="landscape" ? this.landscape.push(gameObject) : this.gameObjects.push(gameObject);
                 }
@@ -107,20 +106,22 @@ export default function () {
                 this.selectedArea = this.selection.select(this.select, this.camera.getCord());
                 const { x1, y1, x2, y2 } = this.selectedArea;
 
-                this.selectedObjects = this.gameObjects.filter(object => {
+                this.selectedObjects = this.objectType === "landscape" ? 
+                this.landscape.filter(piece=>{
+                    const { w, h } = piece.getSize();
+                    const { y, x } = piece.getCord();
+
+                    return y < y2 && y + h > y1 &&
+                        x < x2 && x + w > x1;
+                }) 
+                : this.gameObjects.filter(object => {
                     const { w, h } = object.getSize();
                     const { y, x } = object.getCord();
 
                     return y < y2 && y + h > y1 &&
                         x < x2 && x + w > x1;
                 });
-                this.selectedObjects = [...this.selectedObjects, ...this.landscape.filter(piece=>{
-                    const { w, h } = piece.getSize();
-                    const { y, x } = piece.getCord();
-
-                    return y < y2 && y + h > y1 &&
-                        x < x2 && x + w > x1;
-                })]
+                
 
                 this.selectedObjects.map(i => i.select());
                 delete this.select;

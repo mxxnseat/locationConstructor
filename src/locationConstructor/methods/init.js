@@ -58,7 +58,7 @@ export function getDirectories() {
             dirHTML.append(img);
             dirHTML.addEventListener("click", ()=>{
                 this.getImages(src);
-                this.objectType = directory; // В какой из 2х массиваов закидывать текстуру
+                this.objectType = directory; // В какой из 2х массивов закидывать текстуру
                 this.textureParams = null;
             });
             uploadTo.append(dirHTML);

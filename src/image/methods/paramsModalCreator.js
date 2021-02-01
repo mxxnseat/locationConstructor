@@ -50,7 +50,6 @@ export default function (imgElement) {
                 imageParamModal.prepend(setSizeModal);
                 const setBtn = document.querySelector(".set-size_btn");
                 setBtn.addEventListener("click", ()=>{
-                    console.log("click");
                     const width = +document.querySelector("#width").value;
                     const height = +document.querySelector("#height").value;
 
