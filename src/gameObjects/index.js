@@ -24,7 +24,6 @@ export default class GameObject {
         const y = this.y;
         const textureUrl = this.texture.src;
         const pathToTexture= textureUrl.replace(/^[a-z]{4}\:\/{2}[a-z]+\:[0-9]{1,4}.(.*)/, '$1');
-        console.log(pathToTexture);
         return {
             w,h,
             x,y,

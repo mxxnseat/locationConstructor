@@ -10,7 +10,7 @@ import GameObject from "../gameObjects";
 
 
 export default class LocationConstructor {
-    constructor(cnv, ctx,landscapeCnv, landscapeCtx, locSizes) {
+    constructor(cnv, ctx, landscapeCnv, landscapeCtx, locSizes) {
         this.cancelLoop = false;
 
         this.cnv = cnv;
@@ -18,7 +18,7 @@ export default class LocationConstructor {
         this.landscapeCnv = landscapeCnv;
         this.landscapeCtx = landscapeCtx;
         this.locationSize = locSizes;
-        this.loadDir = "landscape"; 
+        this.loadDir = "landscape";
 
         this.listeners = listeners.bind(this);
         this.collisionElement = collisionElement.bind(this);
@@ -32,8 +32,6 @@ export default class LocationConstructor {
         this.gameObjects = [];
         this.landscape = [];
         this.keydown = {};
-
-        this.init();
     }
     selectTexture({ image, width, height }) {
         this.textureParams = {
@@ -51,8 +49,29 @@ export default class LocationConstructor {
             this.cnv.height = this.landscapeCnv.height = innerHeight;
         })
     }
-    init() {
-        
+    init(loaded = null) {
+        if (loaded) {
+            loaded.landscape.map(i => {
+                new Promise(resolve => {
+                    const texture = new Image();
+                    texture.src = i.texture;
+                    texture.onload = () => resolve(texture);
+                }).then(texture=>{
+                   this.landscape.push(new GameObject(i.x, i.y, { w: i.w, h: i.h, texture }));
+                });
+            });
+            loaded.gameObjects.map(i => {
+                new Promise(resolve => {
+                    const texture = new Image();
+                    texture.src = i.texture;
+                    texture.onload = () => resolve(texture);
+                }).then(texture=>{
+                   this.gameObjects.push(new GameObject(i.x, i.y, { w: i.w, h: i.h, texture }));
+                });
+            });
+        }
+
+
         this.getDirectories();
         this.collisionElement();
         this.submitingForm();
@@ -66,14 +85,14 @@ export default class LocationConstructor {
         this.setCanvasSize();
         this.loop();
     }
-    clear(){
-        this.ctx.clearRect(0,0,innerWidth,innerHeight);
-        this.landscapeCtx.clearRect(0,0,innerWidth,innerHeight);
+    clear() {
+        this.ctx.clearRect(0, 0, innerWidth, innerHeight);
+        this.landscapeCtx.clearRect(0, 0, innerWidth, innerHeight);
     }
     draw() {
         this.clear();
 
-        this.landscape.map(piece=>piece.draw(this.landscapeCtx, this.camera.getCord()));
+        this.landscape.map(piece => piece.draw(this.landscapeCtx, this.camera.getCord()));
         this.gameObjects.map(object => object.draw(this.ctx, this.camera.getCord()));
 
         this.select && this.selection.draw(this.select);
@@ -81,9 +100,9 @@ export default class LocationConstructor {
 
         this.textureParams && this.ctx.drawImage(this.textureParams.texture, this.clientCursorPosition.x, this.clientCursorPosition.y, this.textureParams.w, this.textureParams.h);
     }
-    loop(){
+    loop() {
         this.draw();
 
-        !this.cancelLoop && requestAnimationFrame(()=>this.loop());
+        !this.cancelLoop && requestAnimationFrame(() => this.loop());
     }
 }

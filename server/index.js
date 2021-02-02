@@ -8,8 +8,8 @@ const fs = require("fs");
 const publicPath = path.resolve(__dirname, "../app");
 
 server.use(express.static(publicPath));
-server.use(bodyParser.json({ limit: '10mb', extended: true }))
-server.use(bodyParser.urlencoded({ limit: '10mb', extended: true }))
+server.use(bodyParser.json({ limit: '100mb', parameterLimit: 1000000,extended: true }))
+server.use(bodyParser.urlencoded({ limit: '100mb',parameterLimit: 1000000, extended: true }))
 
 
 const storage = multer.diskStorage({
@@ -65,46 +65,29 @@ server.post("/save", (req, res) => {
     const dir = path.join(mapsStorage, createDirName);
 
     const map = req.body;
-    console.log(map);
-    fs.access(dir, (err) => {
-        if (err) {
-            fs.mkdirSync(dir, (err) => {
-                err && console.log(err);
-                fs.writeFileSync(`${dir}/map.json`, JSON.stringify(map), (err) => {
-                    if (err) console.log(err);
-                });
-            });
-            fs.mkdirSync(`${dir}/assets`, (err) => { err && console.log(err); return });
-        } else {
-            fs.writeFileSync(`${dir}/map.json`, JSON.stringify(map), (err) => {
-                if (err) console.log(err);
+    
+    !fs.existsSync(dir) && fs.mkdirSync(dir);
+    !fs.existsSync(path.join(dir,"assets")) && fs.mkdirSync(path.join(dir,"assets"));
+    fs.writeFileSync(dir+"/map.json", JSON.stringify(map));
+    for(let piece in map){
+        if(piece !== "locSize"){
+            map[piece].map(item=>{
+                let imageName = item.texture.match(/([a-z]+\/){3}(.+\.png)/i)[2];
+                if(!fs.existsSync(path.join(dir,`assets/${imageName}`))){
+                    console.log(path.join(dir,`assets/${imageName}`));
+                    fs.copyFileSync(path.join(publicPath,item.texture), path.join(dir,`assets/${imageName}`));
+                }
             });
         }
-    })
-
-    for(let piece in map){
-        if(piece  == "locSize") continue;
-        map[piece].map(item => {
-            const imageName = item.texture.match(/([a-z]+\/){3}(.+\.png)/i)[2];
-            fs.access(`${dir}/assets/${imageName}`, (err) => {
-                err && fs.copyFile(path.join(publicPath, item.texture), `${dir}/assets/${imageName}`, (err) => {
-                    if (err) {
-                        return;
-                    };
-                    console.log("file copy");
-                });
-            })
-        });
     }
-   
-    res.send("Map save");
+    res.send("Saving successfully");
 });
 
-server.post("/loadMap", (req,res)=>{
+server.post("/loadMap", (req, res) => {
     const filename = req.body.filename;
     const filePath = path.join(publicPath, `maps/test/${filename}`);
-    fs.readFile(filePath,(err,data)=>{
-        if(err) {
+    fs.readFile(filePath, (err, data) => {
+        if (err) {
             console.log(err);
             return;
         };

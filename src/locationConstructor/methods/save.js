@@ -19,14 +19,12 @@ export default function () {
                 })
             };
     
-            console.log(JSON.stringify(map));
-    
             axios.post(`/save?locname=${locName}`, JSON.stringify(map), {
                 headers: {
                     'Content-Type': 'application/json'
                 }
             }).then(({data})=>{
-                console.log(data);
+                alert(data);
             })
         }
 

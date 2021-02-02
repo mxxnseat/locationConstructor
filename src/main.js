@@ -46,6 +46,10 @@ function canvasInit() {
     loadBtn.addEventListener("click",(e)=>{
         const file = document.querySelector("#load-map");
         const data = {filename:file.files[0].name};
+        if(data.filename.split('.')[1] !== "json") {
+            alert("Choose .json file");
+            return;
+        }
         axios.post("/loadMap", JSON.stringify(data),{
             headers:{
                 "Content-Type":"application/json"
@@ -56,11 +60,13 @@ function canvasInit() {
                 width: data.locSize.width,
                 height: data.locSize.height
             };
-            const readyLandscape = data.landscape;
-            console.log(sizes);
+            const loaded = {
+                landscape: data.landscape,
+                gameObjects: data.gameObjects
+            }
             toggleMenu();
             document.querySelector(".canvas-size-wrapper").remove();
-            new LocationConstructor(cnv,ctx,landscape,landscapeCtx, sizes, readyLandscape);
+            new LocationConstructor(cnv,ctx,landscape,landscapeCtx, sizes).init(loaded);
         });
     });
     btn.addEventListener("click",() => {
@@ -74,7 +80,7 @@ function canvasInit() {
         }
         document.querySelector(".canvas-size-wrapper").remove();
         toggleMenu();
-        new LocationConstructor(cnv, ctx, landscape, landscapeCtx, sizes);
+        new LocationConstructor(cnv, ctx, landscape, landscapeCtx, sizes).init();
     });
 }
 function preloader() {
