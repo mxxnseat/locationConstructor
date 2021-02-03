@@ -51,7 +51,7 @@ export default function () {
         }
     });
     window.addEventListener("keyup", (e) => this.keydown = {});
-    this.cnv.addEventListener("mousemove", (e) => {
+    this.backgroundCnv.addEventListener("mousemove", (e) => {
         const { clientX, clientY } = e;
         if (this.select !== undefined) {
             this.select.x2 = clientX;
@@ -73,35 +73,55 @@ export default function () {
             this.moveCamera.startPointY = clientY;
         }
     });
-    this.cnv.addEventListener("mousedown", (e) => {
+    this.backgroundCnv.addEventListener("mousedown", (e) => {
         this.mouseDown[e.button] = true;
         this.selectedObjects.length && this.selectedObjects.map(i => i.selectCancel());
-        
-        if(this.mouseDown[0]){
-            const x = e.clientX + this.camera.getCord().x;
-                const y = e.clientY + this.camera.getCord().y;
-                if (this.selection.active()) {
-                    this.select = {
-                        x1: e.clientX,
-                        y1: e.clientY
-                    }
-                }
-                else if(this.textureParams) {
-                    const gridCellCord = this.grid.attraction(x, y);
-                    const gameObject = new GameObject(gridCellCord.x, gridCellCord.y, this.textureParams);
 
-                    this.objectType === "landscape" ? this.landscape.push(gameObject) : this.gameObjects.push(gameObject);
+        if (this.mouseDown[0]) {
+            const x = e.clientX + this.camera.getCord().x;
+            const y = e.clientY + this.camera.getCord().y;
+            if (this.selection.active()) {
+                this.select = {
+                    x1: e.clientX,
+                    y1: e.clientY
                 }
+            }
+            else if (this.textureParams) {
+                const gridCellCord = this.grid.attraction(x, y);
+                const gameObject = new GameObject(gridCellCord.x, gridCellCord.y, this.textureParams);
+
+                this.objectType === "landscape" ? this.landscape.push(gameObject) : this.gameObjects.push(gameObject);
+            }
         }
-        if(this.mouseDown[2]){
+        if (this.mouseDown[2] && !this.keydown['Control']) {
+            const { clientX, clientY } = e;
+
+            this.landscape = this.landscape.filter(piece => {
+                const { x, y } = piece.getCord();
+                const { w, h } = piece.getSize();
+                return !(clientX + this.camera.getCord().x >= x &&
+                    clientY + this.camera.getCord().y >= y &&
+                    clientX + this.camera.getCord().x <= x + w &&
+                    clientY + this.camera.getCord().y <= y + h);
+            });
+            this.gameObjects = this.gameObjects.filter(piece => {
+                const { x, y } = piece.getCord();
+                const { w, h } = piece.getSize();
+                return !(clientX + this.camera.getCord().x >= x &&
+                    clientY + this.camera.getCord().y >= y &&
+                    clientX + this.camera.getCord().x <= x + w &&
+                    clientY + this.camera.getCord().y <= y + h);
+            });
+        }
+        if (this.keydown['Control'] && this.mouseDown[2]) {
             this.moveCamera = {
                 startPointX: e.clientX,
                 startPointY: e.clientY
             };
         }
     });
-    this.cnv.addEventListener("mouseup", (e) => {
-        if(this.mouseDown[0]) {
+    this.backgroundCnv.addEventListener("mouseup", (e) => {
+        if (this.mouseDown[0]) {
             if (this.select) {
                 this.selectedArea = this.selection.select(this.select, this.camera.getCord());
                 const { x1, y1, x2, y2 } = this.selectedArea;

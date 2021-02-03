@@ -85,15 +85,9 @@ server.post("/save", (req, res) => {
 
 server.post("/loadMap", (req, res) => {
     const filename = req.body.filename;
-    const filePath = path.join(publicPath, `maps/test/${filename}`);
-    fs.readFile(filePath, (err, data) => {
-        if (err) {
-            console.log(err);
-            return;
-        };
+    const filePath = path.join(publicPath, `maps/main/${filename}`);
 
-        res.send(data);
-    });
+    res.send(fs.readFileSync(filePath));
 });
 
 server.listen(3001, () => {

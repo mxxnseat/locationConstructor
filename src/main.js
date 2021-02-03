@@ -3,12 +3,6 @@ import "./scss/index.scss";
 import LocationConstructor from "./locationConstructor";
 import axios from "axios";
 
-const cnv = document.querySelector("#main");
-const ctx = cnv.getContext("2d");
-
-const landscape = document.querySelector("#landscape");
-const landscapeCtx = landscape.getContext("2d");
-
 function toggleMenu() {
     const openBtn = document.querySelector(".open");
     const menu = document.querySelector(".menu-wrapper");
@@ -66,7 +60,7 @@ function canvasInit() {
             }
             toggleMenu();
             document.querySelector(".canvas-size-wrapper").remove();
-            new LocationConstructor(cnv,ctx,landscape,landscapeCtx, sizes).init(loaded);
+            new LocationConstructor(sizes).init(loaded);
         });
     });
     btn.addEventListener("click",() => {
@@ -80,7 +74,7 @@ function canvasInit() {
         }
         document.querySelector(".canvas-size-wrapper").remove();
         toggleMenu();
-        new LocationConstructor(cnv, ctx, landscape, landscapeCtx, sizes).init();
+        new LocationConstructor(sizes).init();
     });
 }
 function preloader() {

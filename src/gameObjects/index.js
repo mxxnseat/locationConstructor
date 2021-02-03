@@ -39,7 +39,6 @@ export default class GameObject {
     draw(ctx, camera) {
         const x = this.x - camera.x;
         const y = this.y - camera.y;
-        ctx.globalCompositeOperation = "source-over";
         if (this.x >= camera.x-this.size.w &&
             this.y >= camera.y-this.size.h &&
             this.x + this.size.w <= camera.x + innerWidth+this.size.w &&
