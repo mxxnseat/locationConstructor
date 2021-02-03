@@ -11,8 +11,7 @@ import GameObject from "../gameObjects";
 
 export default class LocationConstructor {
     constructor(cnv, ctx, landscapeCnv, landscapeCtx, locSizes) {
-        this.cancelLoop = false;
-
+        
         this.cnv = cnv;
         this.ctx = ctx;
         this.landscapeCnv = landscapeCnv;
@@ -32,6 +31,7 @@ export default class LocationConstructor {
         this.gameObjects = [];
         this.landscape = [];
         this.keydown = {};
+        this.mouseDown = {};
     }
     selectTexture({ image, width, height }) {
         this.textureParams = {
@@ -83,26 +83,30 @@ export default class LocationConstructor {
         this.camera = new Camera();
 
         this.setCanvasSize();
+        this.draw();
         this.loop();
     }
     clear() {
         this.ctx.clearRect(0, 0, innerWidth, innerHeight);
-        this.landscapeCtx.clearRect(0, 0, innerWidth, innerHeight);
     }
     draw() {
         this.clear();
 
-        this.landscape.map(piece => piece.draw(this.landscapeCtx, this.camera.getCord()));
+        this.landscape.map(piece => piece.draw(this.ctx, this.camera.getCord()));
         this.gameObjects.map(object => object.draw(this.ctx, this.camera.getCord()));
 
         this.select && this.selection.draw(this.select);
         this.grid.active() && this.grid.draw(this.locationSize, this.camera.getCord());
-
-        this.textureParams && this.ctx.drawImage(this.textureParams.texture, this.clientCursorPosition.x, this.clientCursorPosition.y, this.textureParams.w, this.textureParams.h);
+    }
+    selectedTextureDraw(){
+        
+        this.landscapeCtx.clearRect(0, 0, innerWidth, innerHeight);
+        this.textureParams && this.landscapeCtx.drawImage(this.textureParams.texture, this.clientCursorPosition.x, this.clientCursorPosition.y, this.textureParams.w, this.textureParams.h);
     }
     loop() {
-        this.draw();
+        this.selectedTextureDraw();
+        (Object.keys(this.mouseDown).length || Object.keys(this.keydown).length) && this.draw();
 
-        !this.cancelLoop && requestAnimationFrame(() => this.loop());
+        requestAnimationFrame(() => this.loop());
     }
 }
